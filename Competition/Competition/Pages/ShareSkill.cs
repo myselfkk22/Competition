@@ -90,61 +90,61 @@ namespace Competition.Pages
         private IWebElement actualDescription => driver.FindElement(By.XPath("//div[2]//div[2]/div[1]/div[1]/div[2]/div[2]//div[1]//div[2]"));
 
         //Check the actual Sub Caegory
-        private IWebElement actualCategory => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'Programming & Tech')]"));
+        private IWebElement actualCategory => driver.FindElement(By.XPath("//div[contains(text(),'Category')]//following-sibling::div"));
 
          //Check the actual Sub Caegory
-        private IWebElement actualSubCategory => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'QA')]"));
+        private IWebElement actualSubCategory => driver.FindElement(By.XPath("//div[contains(text(),'Subcategory')]//following-sibling::div"));
 
         //Check the actual Service
-        private IWebElement actualService => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'One-off')]"));
+        private IWebElement actualService => driver.FindElement(By.XPath("//div[contains(text(),'Service Type')]//following-sibling::div"));
 
         //Check the actual start date
-        private IWebElement actualStartDate => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'2022-08-15')]"));
+        private IWebElement actualStartDate => driver.FindElement(By.XPath("//div[contains(text(),'Start Date')]//following-sibling::div"));
 
         //Check the actual end date
-        private IWebElement actualEndDate => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'2022-08-31')]"));
+        private IWebElement actualEndDate => driver.FindElement(By.XPath("//div[contains(text(),'End Date')]//following-sibling::div"));
 
         //Check the actual location type
-        private IWebElement actualLocationType => driver.FindElement(By.XPath("//div[@class='eight wide column']//div[contains(text(),'Online')] "));
+        private IWebElement actualLocationType => driver.FindElement(By.XPath("//div[contains(text(),'Location Type')]//following-sibling::div"));
 
         //Check the actual skillTrade
-        private IWebElement actualSkillTrade => driver.FindElement(By.XPath("//div[contains(text(),'Skills Trade')]"));
+        private IWebElement actualSkillTrade => driver.FindElement(By.XPath("//div[contains(text(),'Skills Trade')]//following-sibling::div/span"));
 
-        private IWebElement actualSkillExchange => driver.FindElement(By.XPath("//span[@class='ui tag label']/text()"));
+        private IWebElement actualSkillExchange => driver.FindElement(By.XPath("//div[contains(text(),'Skills Trade')]//following-sibling::div"));
 
 
-        internal void EnterShareSkill()
+        public void EnterShareSkill(int rowNumber, string Excelsheet)
         {
-            ExcelLib.PopulateInCollection(Base.ExcelPath, "ShareSkill");
+            ExcelLib.PopulateInCollection(Base.ExcelPath, Excelsheet);
             
             //Click on Share Skill button
             ShareSkillButton.Click();
             wait(1);
 
             //Enter Title 
-            Title.SendKeys(ExcelLib.ReadData(2,"Title"));
+            Title.SendKeys(ExcelLib.ReadData(rowNumber, "Title"));
 
             //Enter Description
-            Description.SendKeys(ExcelLib.ReadData(2,"Description"));
+            Description.SendKeys(ExcelLib.ReadData(rowNumber, "Description"));
 
             //Select category
             var selectCategory = new SelectElement(CategoryDropDown);
-            selectCategory.SelectByText(ExcelLib.ReadData(2, "Category"));
+            selectCategory.SelectByText(ExcelLib.ReadData(rowNumber, "Category"));
             Thread.Sleep(5000);
             
              //Select Subcategory
             //SubCategoryDropDown.Click();
             var selectSubcategory = new SelectElement(SubCategoryDropDown);
-            selectSubcategory.SelectByText(ExcelLib.ReadData(2, "Subcategory"));
+            selectSubcategory.SelectByText(ExcelLib.ReadData(rowNumber, "Subcategory"));
 
 
             //Enter tag
             Tags.Click();
-            Tags.SendKeys(ExcelLib.ReadData(2, "Tags"));
+            Tags.SendKeys(ExcelLib.ReadData(rowNumber, "Tags"));
             Tags.SendKeys(Keys.Return);
 
             //Select Service type
-            string expectedServiceType = ExcelLib.ReadData(2, "ServiceType");
+            string expectedServiceType = ExcelLib.ReadData(rowNumber, "ServiceType");
             string expectedServiceValue = "0";
 
             if (expectedServiceType.Equals("One-off service"))
@@ -160,7 +160,7 @@ namespace Competition.Pages
             }
 
             //Select Location type
-            string expectedLocationType = ExcelLib.ReadData(2, "LocationType");
+            string expectedLocationType = ExcelLib.ReadData(rowNumber, "LocationType");
             string expectedLocationValue = "1";
 
             if (expectedLocationType.Equals("On-site"))
@@ -175,16 +175,20 @@ namespace Competition.Pages
                 }
             }
 
-
+            Thread.Sleep(2000);
             //Enter Start date
-            StartDateDropDown.SendKeys (ExcelLib.ReadData(2,"Startdate"));
-
+            StartDateDropDown.Click();
+            string startDate = ExcelLib.ReadData(rowNumber, "StartDate");
+            StartDateDropDown.SendKeys(startDate);
+            Thread.Sleep(1000);
             //Enter End date
-            EndDateDropDown.SendKeys(ExcelLib.ReadData(2, "Enddate"));
+            string endDate = ExcelLib.ReadData(rowNumber, "EndDate");
+            EndDateDropDown.Click();
+            EndDateDropDown.SendKeys(endDate);
             Thread.Sleep(2000);
 
             //Enter available Days
-            string expectedDays = ExcelLib.ReadData(2, "Days");
+            string expectedDays = ExcelLib.ReadData(rowNumber, "Days");
             string indexValue = "";
             switch(expectedDays)
             {
@@ -217,16 +221,16 @@ namespace Competition.Pages
                   
                 {
                     Days[i].Click();
-                    StartTime[i].SendKeys(ExcelLib.ReadData(2, "StartTime"));
+                    StartTime[i].SendKeys(ExcelLib.ReadData(rowNumber, "StartTime"));
 
-                    EndTime[i].SendKeys(ExcelLib.ReadData(2, "EndTime"));
+                    EndTime[i].SendKeys(ExcelLib.ReadData(rowNumber, "EndTime"));
                 }
             }
 
             Thread.Sleep(1000);
             
             //Skill Trade radio button
-            string expectedSkillTrade = ExcelLib.ReadData(2, "SkillTrade");
+            string expectedSkillTrade = ExcelLib.ReadData(rowNumber, "SkillTrade");
             string expectedSkillValue = "true";
 
             if (expectedSkillTrade.Equals("Credit"))
@@ -245,18 +249,20 @@ namespace Competition.Pages
                         //Enter tags for skill exchange
                     {
                         SkillExchange.Click();
-                        SkillExchange.SendKeys(ExcelLib.ReadData(2, "Skill-Exchange"));
+                        SkillExchange.SendKeys(ExcelLib.ReadData(rowNumber, "Skill-Exchange"));
                         SkillExchange.SendKeys(Keys.Return);
                     }
                     else
                     {
                         //Entering Credit amount
-                        CreditAmount.SendKeys(ExcelLib.ReadData(2, "Credit"));
+                        CreditAmount.SendKeys(ExcelLib.ReadData(rowNumber, "Credit"));
                     }
                 }
             }
 
+
             //Click on work samples button
+            Thread.Sleep(4000);
             WorkSamples.Click();
             wait(3);
             //Run AutoIt Script to Execute file uploading
@@ -268,7 +274,7 @@ namespace Competition.Pages
             Thread.Sleep(1000);
 
             //Select Active Option
-            string expectedActiveOption = ExcelLib.ReadData(2, "ActiveOption");
+            string expectedActiveOption = ExcelLib.ReadData(rowNumber, "ActiveOption");
             string expectedActiveValue = "true";
             
             if (expectedActiveOption.Equals("Hidden"))              
@@ -288,79 +294,161 @@ namespace Competition.Pages
             
         }
 
-        internal void ValidateShareSkill()
+        public void ValidateShareSkill(int rowNumber, string Excelsheet)
         {
             //Populate Excel data
-            ExcelLib.PopulateInCollection(Base.ExcelPath, "ShareSkill");
+            ExcelLib.PopulateInCollection(Base.ExcelPath, Excelsheet);
+
+            //Retrieve excel data
+            string expectedTitle = ExcelLib.ReadData(rowNumber, "Title");
+            string expectedDescription = ExcelLib.ReadData(rowNumber, "Description");
 
             //Validate actual Title with Expected title
-            Assert.AreEqual(ExcelLib.ReadData(2, "Title"), actualTitle.Text);
+
+            Assert.AreEqual(expectedTitle, actualTitle.Text);
 
             //Validate actual Description with Expected Description
-            Assert.AreEqual(ExcelLib.ReadData(2, "Description"), actualDescription.Text);
+            Assert.AreEqual(expectedDescription, actualDescription.Text);
 
             //Validate actual Category with Expected Category
-            Assert.AreEqual(ExcelLib.ReadData(2, "Category"), actualCategory.Text);
+            Assert.AreEqual(ExcelLib.ReadData(rowNumber, "Category"), actualCategory.Text);
 
             //Validate actual SubCategory with Expected SubCategory
-            Assert.AreEqual(ExcelLib.ReadData(2, "Subcategory"), actualSubCategory.Text);
+            Assert.AreEqual(ExcelLib.ReadData(rowNumber, "Subcategory"), actualSubCategory.Text);
 
             //Validate actual ServiceType with Expected ServiceType
-            Assert.AreEqual(ExcelLib.ReadData(2, "ServiceType"), actualService.Text);
+            Assert.AreEqual(ExcelLib.ReadData(rowNumber, "ServiceType"), actualService.Text+ " service");
 
             //Validate actual StartDate with Expected StartDate
-            Assert.AreEqual(ExcelLib.ReadData(2, "Startdate"), actualStartDate.Text);
+
+            //Assert.AreEqual(ExcelLib.ReadData(rowNumber, "Startdate"), actualStartDate.Text);
+            string start_date = ExcelLib.ReadData(rowNumber, "StartDate");
+            Thread.Sleep(1000);
+            string expectedStartDate = DateTime.Parse(start_date)
+                .ToString("yyyy-MM-dd");
+            string actual_StartDate = actualStartDate.Text;
+            Assert.AreEqual(expectedStartDate, actual_StartDate);
 
             //Validate actual EndDate with Expected EndDate
-            Assert.AreEqual(ExcelLib.ReadData(2, "Enddate"), actualEndDate.Text);
+            //Assert.AreEqual(ExcelLib.ReadData(rowNumber, "Enddate"), actualEndDate.Text);
+
+            string expecteEndDate = DateTime.Parse(ExcelLib.ReadData(rowNumber, "EndDate"))
+                 .ToString("yyyy-MM-dd");
+            Assert.AreEqual(expecteEndDate, actualEndDate.Text);
 
             //Validate actual LocationType with Expected LocationType
-            Assert.AreEqual(ExcelLib.ReadData(2, "LocationType"), actualLocationType.Text);
+            Assert.AreEqual(ExcelLib.ReadData(rowNumber, "LocationType"), actualLocationType.Text);
 
             //Validate actual SkillTrade with Expected SkillTrade
             if (ExcelLib.ReadData(2, "SkillTrade") == "Credit")
                 Assert.AreEqual("None Specified", actualSkillTrade.Text);
             else
-                Assert.AreEqual(ExcelLib.ReadData(2, "Skill-Exchange"), actualSkillExchange.Text);
+                Assert.AreEqual(ExcelLib.ReadData(rowNumber, "Skill-Exchange"), actualSkillExchange.Text);
 
 
 
         }
 
-
-
-        internal void EditShareSkill()
+        public void ClearData()
         {
             ExcelLib.PopulateInCollection(Base.ExcelPath, "ShareSkill");
+            //Click on Share Skill button
+            ShareSkillButton.Click();
+            wait(1);
+
+            //Clear the Title 
+            Title.Clear();
+           
+            //Clear the Description
+            Description.Clear();
+
+            //Thread.Sleep(1000);
+            ////Clear the Select Category
+            //CategoryDropDown.Clear();
+
+            //Thread.Sleep(1000);
+            ////Clear the SubCategory dropdown
+            //SubCategoryDropDown.Clear();
+           
+            //Clear the Tags 
+            Tags.Clear();
+           
+            ////Clear the Service trpe radio button
+            //radioServiceType.Clear();
+            
+            ////Clear the Location type radio button
+            //radioLocationType.Clear();
+            
+            ////Clear the Start date
+            //StartDateDropDown.Clear();
+           
+            ////Clear the End Date
+            //EndDateDropDown.Clear();
+           
+            //Clear  the Days
+            Days.Clear();
+            
+            //Clear the StartTime
+            StartTime.Clear();
+           
+            //ClearData the End time
+            EndTime.Clear();
+           
+            //Clearthe skill trade button
+            radioSkillTrade.Clear();
+           
+            //Clear the Skill Exchange
+            SkillExchange.Clear();
+            
+            //Clear the Credit amount
+            CreditAmount.Clear();
+           
+            //Clear the Work Sample
+            WorkSamples.Clear();
+           
+           //Clear the active option 
+            radioActiveOption.Clear();
+
+        }
+
+
+        public void EditShareSkill( int rowNumber2, string Excelsheet)
+        {
+            ExcelLib.PopulateInCollection(Base.ExcelPath, Excelsheet);
 
             //Click on Share Skill button
             ShareSkillButton.Click();
             wait(1);
 
+
             //Enter Title 
-            Title.SendKeys(ExcelLib.ReadData(3, "Title"));
+            Title.Clear();
+            Title.SendKeys(ExcelLib.ReadData(rowNumber2,"Title"));
 
             //Enter Description
-            Description.SendKeys(ExcelLib.ReadData(3, "Description"));
+            Description.Clear();
+            Description.SendKeys(ExcelLib.ReadData(rowNumber2, "Description"));
 
             //Select category
+            CategoryDropDown.Click();
             var selectCategory = new SelectElement(CategoryDropDown);
-            selectCategory.SelectByText(ExcelLib.ReadData(3, "Category"));
+            selectCategory.SelectByText(ExcelLib.ReadData(rowNumber2, "Category"));
             Thread.Sleep(5000);
 
             //Select Subcategory
-            //SubCategoryDropDown.Click();
+            SubCategoryDropDown.Click();
             var selectSubcategory = new SelectElement(SubCategoryDropDown);
-            selectSubcategory.SelectByText(ExcelLib.ReadData(3, "Subcategory"));
+            selectSubcategory.SelectByText(ExcelLib.ReadData(rowNumber2, "Subcategory"));
 
 
             //Enter tag
             Tags.Click();
-            Tags.SendKeys(ExcelLib.ReadData(3, "Tags"));
+            Tags.SendKeys(ExcelLib.ReadData(rowNumber2, "Tags"));
             Tags.SendKeys(Keys.Return);
 
             //Select Service type
-            string expectedServiceType = ExcelLib.ReadData(3, "ServiceType");
+            
+            string expectedServiceType = ExcelLib.ReadData(rowNumber2, "ServiceType");
             string expectedServiceValue = "0";
 
             if (expectedServiceType.Equals("One-off service"))
@@ -376,7 +464,7 @@ namespace Competition.Pages
             }
 
             //Select Location type
-            string expectedLocationType = ExcelLib.ReadData(3, "LocationType");
+            string expectedLocationType = ExcelLib.ReadData(rowNumber2, "LocationType");
             string expectedLocationValue = "1";
 
             if (expectedLocationType.Equals("On-site"))
@@ -393,43 +481,41 @@ namespace Competition.Pages
 
 
             //Enter Start date
-            StartDateDropDown.SendKeys(ExcelLib.ReadData(3, "Startdate"));
-
+            StartDateDropDown.Click();
+            string startDate = ExcelLib.ReadData(rowNumber2, "StartDate");
+            StartDateDropDown.SendKeys(startDate);
+            Thread.Sleep(1000);
             //Enter End date
-            EndDateDropDown.SendKeys(ExcelLib.ReadData(3, "Enddate"));
+            string endDate = ExcelLib.ReadData(rowNumber2, "EndDate");
+            EndDateDropDown.Click();
+            EndDateDropDown.SendKeys(endDate);
             Thread.Sleep(2000);
 
+
             //Enter available Days
-            string expectedDays = ExcelLib.ReadData(3, "Days");
+            string expectedDays = ExcelLib.ReadData(rowNumber2, "Days");
             string indexValue = "";
             switch (expectedDays)
             {
 
-                case "Sun":
-                    indexValue = "0";
+                case "Sun": indexValue = "0";
                     break;
 
-                case "Mon":
-                    indexValue = "1";
+                case "Mon": indexValue = "1";
                     break;
 
-                case "Tue":
-                    indexValue = "2";
+                case "Tue": indexValue = "2";
                     break;
 
-                case "Wed":
-                    indexValue = "3";
+                case "Wed": indexValue = "3";
                     break;
 
-                case "Thu":
-                    indexValue = "4";
+                case "Thu": indexValue = "4";
                     break;
 
-                case "Fri":
-                    indexValue = "5";
+                case "Fri": indexValue = "5";
                     break;
-                case "Sat":
-                    indexValue = "6";
+                case "Sat":  indexValue = "6";
                     break;
                 default: break;
             }
@@ -440,16 +526,16 @@ namespace Competition.Pages
 
                 {
                     Days[i].Click();
-                    StartTime[i].SendKeys(ExcelLib.ReadData(3, "StartTime"));
+                    StartTime[i].SendKeys(ExcelLib.ReadData(rowNumber2, "StartTime"));
 
-                    EndTime[i].SendKeys(ExcelLib.ReadData(3, "EndTime"));
+                    EndTime[i].SendKeys(ExcelLib.ReadData(rowNumber2, "EndTime"));
                 }
             }
 
             Thread.Sleep(1000);
 
             //Skill Trade radio button
-            string expectedSkillTrade = ExcelLib.ReadData(3, "SkillTrade");
+            string expectedSkillTrade = ExcelLib.ReadData(rowNumber2, "SkillTrade");
             string expectedSkillValue = "true";
 
             if (expectedSkillTrade.Equals("Credit"))
@@ -468,18 +554,19 @@ namespace Competition.Pages
                     //Enter tags for skill exchange
                     {
                         SkillExchange.Click();
-                        SkillExchange.SendKeys(ExcelLib.ReadData(3, "Skill-Exchange"));
+                        SkillExchange.SendKeys(ExcelLib.ReadData(rowNumber2, "Skill-Exchange"));
                         SkillExchange.SendKeys(Keys.Return);
                     }
                     else
                     {
                         //Entering Credit amount
-                        CreditAmount.SendKeys(ExcelLib.ReadData(3, "Credit"));
+                        CreditAmount.SendKeys(ExcelLib.ReadData(rowNumber2, "Credit"));
                     }
                 }
             }
 
             //Click on work samples button
+            Thread.Sleep(3000);
             WorkSamples.Click();
             wait(3);
             //Run AutoIt Script to Execute file uploading
@@ -491,7 +578,7 @@ namespace Competition.Pages
             Thread.Sleep(1000);
 
             //Select Active Option
-            string expectedActiveOption = ExcelLib.ReadData(3, "ActiveOption");
+            string expectedActiveOption = ExcelLib.ReadData(rowNumber2, "ActiveOption");
             string expectedActiveValue = "true";
 
             if (expectedActiveOption.Equals("Hidden"))
@@ -509,5 +596,9 @@ namespace Competition.Pages
             Save.Click();
             wait(3);
         }
+
+       
+
+
     }
 }

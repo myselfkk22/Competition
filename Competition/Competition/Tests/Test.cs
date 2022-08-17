@@ -11,40 +11,36 @@ namespace Competition
             Console.WriteLine("Hello");
 
         }
-        ShareSkill shareSkillObj;
+       
         ManageListings manageListingsObj;
 
         [Category("Sprint1")]
-        [Test]
+        [Test, Order(1)]
         public void WhenIClickShareSkillAndEnterShareSkill()
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            shareSkillObj = new ShareSkill();
-            shareSkillObj.EnterShareSkill();
+            manageListingsObj = new ManageListings();
+            manageListingsObj.AddShareSkill(2,"ShareSkill");
+            manageListingsObj.ValidateListings(2,"ShareSkill");
         }
 
-        [Test]
-        public void ThenShareSkillsCreated()
-        {
-            test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            shareSkillObj = new ShareSkill();
-            shareSkillObj.ValidateShareSkill();
-        } 
-        
-        [Test]
+        [Test, Order(2)]
         public void WhenIClickShareSkillAndEditShareSkill()
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            shareSkillObj = new ShareSkill();
-            shareSkillObj.EditShareSkill();
+            manageListingsObj = new ManageListings();
+            manageListingsObj.AddShareSkill(5, "ManageListings");
+            manageListingsObj.EditListings(5,6, "ManageListings");
+            manageListingsObj.ValidateListings(6, "ManageListings");
         }
 
-        [Test]
+        [Test,Order(3)]
         public void WhenIDeleteListings()
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
             manageListingsObj=new ManageListings();
-            manageListingsObj.DeleteListings();
+            manageListingsObj.DeleteListings(6,"ManageListings");
+            manageListingsObj.ValidateDelete(6, "ManageListings");
         }
     }
 }

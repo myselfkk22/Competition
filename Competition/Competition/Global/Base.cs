@@ -20,7 +20,7 @@ namespace Competition.Global
         #region To access Path from resource file
         public static int Browser = 2;
         public static string excelPath = @"D:\Competition\Competition\Competition\ExcelData\TestData.xlsx";
-        public static string AutoScriptPath = @"D:\Competition\Competition\Competition\TestLibrary\AutoIt\UploadScript.exe";
+        public static string AutoScriptPath = @"D:\Competition\Competition\Competition\TestLibrary\AutoIt\AutoITScript.exe";
         public static string ScreenshotPath = @"D:\Competition\Competition\Competition\TestLibrary\ScreenShots\";
         public static string ReportPath = @"D:\Competition\Competition\Competition\TestLibrary\TestReports\";
         public static string IsLogin = "true";
@@ -98,7 +98,7 @@ namespace Competition.Global
         [TearDown]
         public void TearDown()
         {
-            var test = extent.CreateTest("MyFirstTest", "Sample description");
+           // var test = extent.CreateTest("MyFirstTest", "Sample description");
             //Screenshot
            String img = SaveScreenShotClass.SaveScreenshot(GlobalDefinitions.driver, "Screenshot");
 

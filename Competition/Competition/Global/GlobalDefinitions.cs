@@ -155,6 +155,7 @@ namespace Competition.Global
 
                 fileName.Append(ScreenShotFileName);
                 fileName.Append(DateTime.Now.ToString("_dd-mm-yyyy_mss"));
+
                 fileName.Append(".jpeg");
                 screenShot.SaveAsFile(fileName.ToString(), ScreenshotImageFormat.Jpeg);
                 return fileName.ToString();
