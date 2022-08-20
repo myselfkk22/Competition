@@ -2,6 +2,7 @@
 using AventStack.ExtentReports.Reporter;
 using Competition.Pages;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
@@ -98,25 +99,52 @@ namespace Competition.Global
         [TearDown]
         public void TearDown()
         {
-           // var test = extent.CreateTest("MyFirstTest", "Sample description");
-            //Screenshot
-           String img = SaveScreenShotClass.SaveScreenshot(GlobalDefinitions.driver, "Screenshot");
-
-            test.Log(Status.Info, "Image example: " + img);
+            // Screenshot
+            String img = Screenshot.SaveScreenshot(GlobalDefinitions.driver, "Screenshot");
 
             // log with snapshot
-            test.Log(Status.Pass, "Test Passed");
-            test.Fail("details", MediaEntityBuilder.CreateScreenCaptureFromPath("screenshot.png").Build());
-           
-            
-          // test with snapshot
-            test.AddScreenCaptureFromPath("screenshot.png");
-            
-         
+            var exec_status = TestContext.CurrentContext.Result.Outcome.Status;
+            var errorMessage = TestContext.CurrentContext.Result.Message;
+            var stacktrace = string.IsNullOrEmpty(TestContext.CurrentContext.Result.StackTrace) ? ""
+            : string.Format("{0}", TestContext.CurrentContext.Result.StackTrace);
+
+            string TC_Name = TestContext.CurrentContext.Test.Name;
+            string base64 = Screenshot.GetScreenshot();
+
+            Status logStatus = Status.Pass;
+            switch (exec_status)
+            {
+                case TestStatus.Failed:
+
+                    logStatus = Status.Fail;
+                    test.Log(Status.Fail, exec_status + errorMessage, MediaEntityBuilder.CreateScreenCaptureFromBase64String(base64).Build());
+                    break;
+
+                case TestStatus.Skipped:
+
+                    logStatus = Status.Skip;
+                    test.Log(Status.Skip, errorMessage, MediaEntityBuilder.CreateScreenCaptureFromBase64String(base64).Build());
+                    break;
+
+                case TestStatus.Inconclusive:
+
+                    logStatus = Status.Warning;
+                    test.Log(Status.Warning, "Test ");
+                    break;
+
+                case TestStatus.Passed:
+
+                    logStatus = Status.Pass;
+                    test.Log(Status.Pass, "Test Passed");
+                    break;
+
+                default:
+                    break;
+            }
 
             // Close the driver:)            
-            //GlobalDefinitions.driver.Close();
-            //GlobalDefinitions.driver.Quit();
+            GlobalDefinitions.driver.Close();
+            GlobalDefinitions.driver.Quit();
         }
 
         [OneTimeTearDown]
