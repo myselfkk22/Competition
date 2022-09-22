@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestLibrary\TestReports\" />
     <Folder Include="TestLibrary\ScreenShots\" />
   </ItemGroup>
 

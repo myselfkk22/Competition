@@ -139,27 +139,29 @@ namespace Competition.Global
         #endregion
 
         #region screenshots
-        public class SaveScreenShotClass
+        public class Screenshot
         {
-            public static string SaveScreenshot(IWebDriver driver, string ScreenShotFileName) // Definition
+            public static string SaveScreenshot(IWebDriver driver, string ScreenShotFileName)
             {
-                var folderLocation = (Base.ScreenshotPath);
-
-                if (!System.IO.Directory.Exists(folderLocation))
+                if (!System.IO.Directory.Exists(Base.ScreenshotPath))
                 {
-                    System.IO.Directory.CreateDirectory(folderLocation);
+                    System.IO.Directory.CreateDirectory(Base.ScreenshotPath);
                 }
 
-                var screenShot = ((ITakesScreenshot)driver).GetScreenshot();
-                var fileName = new StringBuilder(folderLocation);
-
-                fileName.Append(ScreenShotFileName);
-                fileName.Append(DateTime.Now.ToString("_dd-mm-yyyy_mss"));
-                fileName.Append(".jpeg");
+                var screenShot = ((ITakesScreenshot)GlobalDefinitions.driver).GetScreenshot();
+                var fileName = new StringBuilder(Base.ScreenshotPath + ScreenShotFileName + DateTime.Now.ToString("_dd-MM-yyyy_HHmm") + ".jpeg");
                 screenShot.SaveAsFile(fileName.ToString(), ScreenshotImageFormat.Jpeg);
                 return fileName.ToString();
             }
+
+            public static string GetScreenshot()
+            {
+                return ((ITakesScreenshot)GlobalDefinitions.driver).GetScreenshot().AsBase64EncodedString;
+            }
+
         }
+
+
         #endregion
     }
 }

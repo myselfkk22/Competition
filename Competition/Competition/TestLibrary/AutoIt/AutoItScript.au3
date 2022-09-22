@@ -1,0 +1,5 @@
+ControlFocus("Open","","Edit1")
+Sleep(500)
+ControlSetText("Open","","Edit1","D:\Competition\Competition\Competition\TestLibrary\AutoIt\UploadPicture.docx")
+Sleep(500)
+ControlClick("Open","","Button1")
